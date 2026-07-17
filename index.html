@@ -111,7 +111,7 @@ button{font-family:inherit;cursor:pointer}
 /* ============ HERO ============ */
 .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;padding:0 clamp(20px,4vw,56px) clamp(56px,9vh,110px);overflow:hidden;
   --text:#f2ede4;--muted:#b9c4c4}
-.hero-bg{position:absolute;inset:0;background:url('images/starlight-couple.jpg') center/cover no-repeat;animation:kenburns 22s ease-out forwards;will-change:transform}
+.hero-bg{position:absolute;inset:0;background:url('images/wedding-exit.jpg') center/cover no-repeat;animation:kenburns 22s ease-out forwards;will-change:transform}
 @keyframes kenburns{from{transform:scale(1.12)}to{transform:scale(1)}}
 .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,16,20,.55) 0%,rgba(10,16,20,.15) 40%,rgba(10,16,20,.9) 100%)}
 .hero-inner{position:relative;z-index:2;max-width:1200px;width:100%;margin:0 auto}
@@ -769,7 +769,7 @@ if(seen || reduced){ loader.remove(); camFlash.remove(); requestAnimationFrame((
 else{
   sessionStorage.setItem('asv_seen','1');
   // configured hero image, defocused, behind the logo
-  document.getElementById('loaderBg').style.backgroundImage = `url('${SETTINGS.heroImage||'images/starlight-couple.jpg'}')`;
+  document.getElementById('loaderBg').style.backgroundImage = `url('${SETTINGS.heroImage||'images/wedding-exit.jpg'}')`;
   setTimeout(()=>{ loader.classList.add('in'); }, 150);    // logo fades/sharpens in, big and centered
   setTimeout(()=>{ loader.classList.add('rise'); }, 1150); // logo pushes up toward the stars + focus pull begins
   setTimeout(()=>{ camFlash.classList.add('on'); playShutter(); }, 2150); // logo hits apex, image in focus → flash + shutter
@@ -959,7 +959,7 @@ function persist(){
 function refreshPublic(){ applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); }
 function admRender(){
   const pl=document.getElementById('admPhotoList'); pl.innerHTML='';
-  const curHero = SETTINGS.heroImage || 'images/starlight-couple.jpg';
+  const curHero = SETTINGS.heroImage || 'images/wedding-exit.jpg';
   GALLERY.forEach((g,i)=>{
     const d=document.createElement('div'); d.className='adm-item';
     d.innerHTML=`<img src="${g.src}" alt=""><div class="meta"><b>${g.title}</b><span>${g.cat}</span></div>`;
