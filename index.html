@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aShutterVision — Photo + Video | DFW | Make Your Vision a Reality</title>
+<meta name="description" content="aShutterVision — photography and cinematography in the DFW area. Portraits, weddings, music videos, events. 10+ years of experience at introductory comeback rates.">
+<script>
+/* Apply saved color mode before first paint to avoid flash */
+(function(){try{var m=localStorage.getItem('asv_mode');if(m==='light')document.documentElement.dataset.mode='light';}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* PALETTE:DARK */
+:root{
+  --ink:#0a0a0c;
+  --panel:#131318;
+  --panel-2:#191922;
+  --line:rgba(242,239,233,.12);
+  --text:#f2efe9;
+  --muted:#9b98a0;
+  --accent:#e8b44c;       /* champagne gold */
+  --accent-hover:#f5c866;
+  --accent-2:#d8c08a;
+  --accent-soft:rgba(232,180,76,.5);
+  --nav-bg:rgba(10,10,12,.82);
+  --stroke:rgba(242,239,233,.32);
+  --card-shadow:none;
+  --logo-filter:none;
+  --accent-contrast:#0a0a0c;
+}
+/* PALETTE:END */
+/* PALETTE:LIGHT */
+[data-mode="light"]{
+  --ink:#f7f4ec;
+  --panel:#fdfbf5;
+  --panel-2:#efe9da;
+  --line:rgba(25,25,33,.16);
+  --text:#1b1a22;
+  --muted:#5f5d68;
+  --accent:#a8781f;
+  --accent-hover:#8f6314;
+  --accent-2:#8a6a2f;
+  --accent-soft:rgba(168,120,31,.45);
+  --nav-bg:rgba(247,244,236,.85);
+  --stroke:rgba(27,26,34,.3);
+  --card-shadow:0 10px 30px rgba(27,26,34,.08);
+  --logo-filter:invert(1) opacity(.92);
+  --accent-contrast:#fff;
+}
+/* PALETTE:LIGHT-END */
+:root{
+  --display:'Anton',sans-serif;
+  --body:'Manrope',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--body);line-height:1.6;overflow-x:hidden;transition:background .4s,color .4s}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--accent);color:var(--accent-contrast)}
+.logo-img{height:32px;width:auto;filter:var(--logo-filter);transition:filter .4s}
+
+/* ============ PRELOADER / LOGO INTRO ============ */
+#aperture-loader{position:fixed;inset:0;z-index:1000;background:#0a0a0c;display:flex;align-items:center;justify-content:center;transition:opacity .7s ease .1s,visibility .7s .1s;overflow:hidden}
+#aperture-loader.open{opacity:0;visibility:hidden;pointer-events:none}
+.loader-bg{position:absolute;inset:0;background:center/cover no-repeat;filter:blur(26px) brightness(.5);transform:scale(1.14);transition:filter 1s cubic-bezier(.6,0,.3,1),transform 1s cubic-bezier(.6,0,.3,1)}
+#aperture-loader.rise .loader-bg{filter:blur(0) brightness(.82);transform:scale(1.03)}
+.loader-logo{position:relative;z-index:2;width:min(58vw,470px);transform:translateY(18px) scale(.84);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+#aperture-loader.in .loader-logo{transform:translateY(0) scale(1)}
+#aperture-loader.rise .loader-logo{transition:transform 1s cubic-bezier(.55,0,.2,1);transform:translateY(-26vh) scale(.8)}
+#camFlash{position:fixed;inset:0;z-index:1100;background:#fff;opacity:0;pointer-events:none;transition:opacity .1s ease-in}
+#camFlash.on{opacity:1}
+#camFlash.fade{transition:opacity .55s ease-out;opacity:0}
+@media (prefers-reduced-motion:reduce){
+  #aperture-loader,#camFlash{display:none}
+}
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:16px clamp(20px,4vw,56px);transition:background .35s,border-color .35s,padding .35s;border-bottom:1px solid transparent}
+.nav.scrolled{background:var(--nav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line);padding-top:10px;padding-bottom:10px}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-links{display:flex;gap:32px;align-items:center;list-style:none}
+.nav-links a{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .25s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:var(--accent-contrast)!important;padding:10px 20px;border-radius:2px;transition:background .25s}
+.nav-cta:hover{background:var(--accent-hover)}
+.mode-toggle{background:none;border:1px solid var(--line);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.25s}
+.mode-toggle:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.mode-toggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.mode-toggle .ic-sun{display:block}
+.mode-toggle .ic-moon{display:none}
+[data-mode="light"] .mode-toggle .ic-sun{display:none}
+[data-mode="light"] .mode-toggle .ic-moon{display:block}
+.burger{display:none;background:none;border:none;width:34px;height:26px;position:relative;z-index:300}
+.burger span{position:absolute;left:0;width:100%;height:2px;background:var(--text);transition:.3s}
+.burger span:nth-child(1){top:2px}.burger span:nth-child(2){top:12px}.burger span:nth-child(3){top:22px}
+.burger.on span:nth-child(1){top:12px;transform:rotate(45deg)}
+.burger.on span:nth-child(2){opacity:0}
+.burger.on span:nth-child(3){top:12px;transform:rotate(-45deg)}
+@media(max-width:900px){
+  .burger{display:block}
+  .nav-links{position:fixed;inset:0;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);flex-direction:column;justify-content:center;gap:36px;transform:translateY(-100%);transition:transform .4s cubic-bezier(.7,0,.2,1)}
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{font-size:18px}
+}
+
+/* ============ HERO ============ */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;padding:0 clamp(20px,4vw,56px) clamp(56px,9vh,110px);overflow:hidden;
+  --text:#f2ede4;--muted:#b9c4c4}
+.hero-bg{position:absolute;inset:0;background:url('images/starlight-couple.jpg') center/cover no-repeat;animation:kenburns 22s ease-out forwards;will-change:transform}
+@keyframes kenburns{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,16,20,.55) 0%,rgba(10,16,20,.15) 40%,rgba(10,16,20,.9) 100%)}
+.hero-inner{position:relative;z-index:2;max-width:1200px;width:100%;margin:0 auto}
+.exif{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent-2);display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.exif::before{content:'';width:44px;height:1px;background:var(--accent-2)}
+.hero h1{font-family:var(--display);font-size:clamp(50px,9.5vw,136px);line-height:.94;letter-spacing:.01em;text-transform:uppercase;font-weight:400;color:#f2ede4}
+.dot{color:var(--accent)}
+.hero-sub{max-width:520px;margin-top:26px;color:#b9c4c4;font-size:clamp(15px,1.4vw,17px)}
+.hero-sub strong{color:#f2ede4}
+.hero-ctas{display:flex;gap:16px;margin-top:34px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;border-radius:2px;border:1px solid transparent;transition:.25s}
+.btn-gold{background:var(--accent);color:var(--accent-contrast)}
+.btn-gold:hover{background:var(--accent-hover);transform:translateY(-2px)}
+.btn-ghost{border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.hero .btn-ghost{border-color:rgba(242,237,228,.3);color:#f2ede4}
+.hero .btn-ghost:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.hero-reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+body.loaded .hero-reveal{opacity:1;transform:none}
+body.loaded .hero-reveal:nth-child(2){transition-delay:.12s}
+body.loaded .hero-reveal:nth-child(3){transition-delay:.24s}
+body.loaded .hero-reveal:nth-child(4){transition-delay:.36s}
+.scroll-cue{position:absolute;bottom:26px;right:clamp(20px,4vw,56px);z-index:2;font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#b9c4c4;writing-mode:vertical-rl;display:flex;align-items:center;gap:12px}
+.scroll-cue::after{content:'';width:1px;height:52px;background:linear-gradient(var(--accent-2),transparent);animation:cue 1.8s ease infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============ MARQUEE ============ */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:20px 0;background:var(--panel)}
+.marquee-track{display:flex;gap:0;width:max-content;animation:scroll 30s linear infinite}
+.marquee-track span{font-family:var(--display);font-size:clamp(22px,3vw,34px);text-transform:uppercase;letter-spacing:.08em;color:transparent;-webkit-text-stroke:1px var(--stroke);padding:0 26px;white-space:nowrap}
+.marquee-track span i{font-style:normal;color:var(--accent);-webkit-text-stroke:0;padding:0 26px 0 0}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.marquee-track{animation:none}.hero-bg{animation:none}}
+
+/* ============ SECTIONS ============ */
+section{padding:clamp(72px,10vw,130px) clamp(20px,4vw,56px)}
+.wrap{max-width:1200px;margin:0 auto}
+.sec-head{margin-bottom:clamp(36px,5vw,64px)}
+.sec-head h2,.big-h{font-family:var(--display);font-size:clamp(38px,5.5vw,72px);text-transform:uppercase;line-height:1;font-weight:400}
+.sec-head p{color:var(--muted);max-width:560px;margin-top:16px}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ GALLERY ============ */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.chip{background:none;border:1px solid var(--line);color:var(--muted);padding:9px 18px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;transition:.25s}
+.chip:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{position:relative;overflow:hidden;border-radius:3px;cursor:pointer;aspect-ratio:4/3;background:var(--panel);box-shadow:var(--card-shadow)}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .5s}
+.card:hover img{transform:scale(1.06)}
+.card-info{position:absolute;inset:auto 0 0 0;padding:44px 20px 18px;background:linear-gradient(transparent,rgba(10,16,20,.92));transform:translateY(12px);opacity:0;transition:.45s}
+.card:hover .card-info{transform:none;opacity:1}
+.card-info .cat{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent-2)}
+.card-info h3{font-family:var(--display);font-size:22px;text-transform:uppercase;font-weight:400;letter-spacing:.04em;margin-top:4px;color:#f2ede4}
+.card-ig{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border:1px dashed var(--line);background:var(--panel);text-align:center;padding:28px}
+.card-ig:hover{border-color:var(--accent)}
+.card-ig svg{width:34px;height:34px;stroke:var(--accent)}
+.card-ig p{font-size:14px;color:var(--muted);max-width:220px}
+.card-ig .fol{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+
+/* ============ LIGHTBOX ============ */
+.lightbox{position:fixed;inset:0;z-index:500;background:rgba(8,13,17,.96);display:none;align-items:center;justify-content:center;padding:5vw}
+.lightbox.on{display:flex}
+.lightbox img{max-width:100%;max-height:82vh;object-fit:contain;border-radius:3px}
+.lb-cap{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#93a4ab}
+.lb-cap b{color:var(--accent-2);font-weight:500}
+.lb-btn{position:absolute;top:50%;transform:translateY(-50%);background:none;border:1px solid rgba(242,237,228,.25);color:#f2ede4;width:48px;height:48px;border-radius:50%;font-size:18px;transition:.25s}
+.lb-btn:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.lb-prev{left:20px}.lb-next{right:20px}
+.lb-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#f2ede4;font-size:34px;line-height:1;transition:.25s}
+.lb-close:hover{color:var(--accent)}
+
+/* ============ IG FEED ============ */
+.igfeed{display:none;background:var(--panel)}
+.igfeed.show{display:block}
+.ig-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:1000px){.ig-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:720px){.ig-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.ig-grid{grid-template-columns:repeat(2,1fr)}}
+.ig-item{position:relative;aspect-ratio:1;overflow:hidden;border-radius:3px;display:block;background:var(--panel-2)}
+.ig-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.ig-item::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(62,198,192,.0),rgba(255,122,60,.0));transition:.4s}
+.ig-item:hover img{transform:scale(1.08)}
+.ig-item:hover::after{background:linear-gradient(160deg,rgba(62,198,192,.22),rgba(255,122,60,.28))}
+
+/* ============ FILMS ============ */
+.films{background:var(--panel)}
+.film-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:22px}
+.film{position:relative;aspect-ratio:16/9;border-radius:3px;overflow:hidden;cursor:pointer;background:#000;box-shadow:var(--card-shadow)}
+.film img{width:100%;height:100%;object-fit:cover;opacity:.78;transition:.5s}
+.film:hover img{opacity:.95;transform:scale(1.03)}
+.film iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;background:rgba(10,16,20,.65);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;transition:.3s;pointer-events:none}
+.film:hover .play{background:var(--accent)}
+.play svg{width:22px;height:22px;fill:var(--accent);margin-left:4px;transition:.3s}
+.film:hover .play svg{fill:var(--accent-contrast)}
+.film-title{position:absolute;left:18px;bottom:14px;font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#f2ede4;text-shadow:0 2px 10px rgba(0,0,0,.7);pointer-events:none}
+
+/* ============ SERVICES ============ */
+.intro-note{border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel);padding:22px 26px;margin-bottom:46px;max-width:760px}
+.intro-note p{color:var(--muted);font-size:15px}
+.intro-note b{color:var(--text)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:20px}
+.svc{border:1px solid var(--line);background:var(--panel);padding:34px 30px;border-radius:3px;display:flex;flex-direction:column;transition:border-color .3s,transform .3s;box-shadow:var(--card-shadow)}
+.svc:hover{border-color:var(--accent-soft);transform:translateY(-4px)}
+.svc.feat{border-color:var(--accent);background:linear-gradient(160deg,rgba(255,122,60,.09),var(--panel) 55%)}
+[data-mode="light"] .svc.feat{background:linear-gradient(160deg,rgba(224,86,28,.07),var(--panel) 55%)}
+.svc .tag{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent-2);margin-bottom:14px}
+.svc h3{font-family:var(--display);font-size:26px;text-transform:uppercase;font-weight:400;letter-spacing:.03em}
+.svc .price{font-family:var(--display);font-size:44px;color:var(--accent);margin:14px 0 4px;font-weight:400}
+.svc .price small{font-family:var(--body);font-size:14px;color:var(--muted);letter-spacing:0}
+.svc p{color:var(--muted);font-size:14.5px;margin-top:10px}
+.svc ul{list-style:none;margin-top:16px;flex:1}
+.svc li{font-size:14px;color:var(--muted);padding:7px 0 7px 24px;position:relative;border-top:1px solid var(--line)}
+.svc li::before{content:'—';position:absolute;left:0;color:var(--accent)}
+.svc .btn{margin-top:24px;justify-content:center}
+
+/* ============ ABOUT ============ */
+.about{background:var(--panel)}
+.about-flex{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(36px,6vw,80px);align-items:center}
+@media(max-width:860px){.about-flex{grid-template-columns:1fr}}
+.about-img{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:4/5}
+.about-img img{width:100%;height:100%;object-fit:cover}
+.about-img::after{content:'';position:absolute;inset:0;border:1px solid rgba(62,198,192,.45);transform:translate(14px,14px);pointer-events:none;border-radius:3px}
+.about h2{font-family:var(--display);font-size:clamp(34px,4.5vw,58px);text-transform:uppercase;line-height:1.05;font-weight:400}
+.about p{color:var(--muted);margin-top:18px}
+.about p b{color:var(--text)}
+.stats{display:flex;gap:clamp(24px,4vw,56px);margin-top:34px;flex-wrap:wrap}
+.stat .n{font-family:var(--display);font-size:42px;color:var(--accent);font-weight:400}
+.stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+/* ============ CONTACT ============ */
+.contact-flex{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(36px,6vw,80px)}
+@media(max-width:860px){.contact-flex{grid-template-columns:1fr}}
+.c-left p{color:var(--muted);margin-top:16px;max-width:420px}
+.c-left .mail{display:inline-flex;font-family:var(--mono);color:var(--accent);margin-top:22px;font-size:15px;letter-spacing:.06em;border-bottom:1px solid var(--accent-soft);padding-bottom:3px}
+.socials{display:flex;gap:14px;margin-top:30px}
+.socials a{width:46px;height:46px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.25s}
+.socials a:hover{border-color:var(--accent-2);transform:translateY(-3px)}
+.socials svg{width:19px;height:19px;stroke:var(--text);fill:none;stroke-width:1.8}
+form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f-full{grid-column:1/-1}
+label{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px}
+input,select,textarea{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:2px;padding:14px 16px;color:var(--text);font-family:var(--body);font-size:15px;transition:border-color .25s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2393a4ab' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+textarea{min-height:130px;resize:vertical}
+.form-msg{grid-column:1/-1;font-size:14px;padding:14px 18px;border-radius:2px;display:none}
+.form-msg.ok{display:block;background:rgba(62,198,192,.12);border:1px solid rgba(62,198,192,.45);color:var(--accent-2)}
+.form-msg.err{display:block;background:rgba(220,90,90,.1);border:1px solid rgba(220,90,90,.4);color:#d96b6b}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--line);padding:34px clamp(20px,4vw,56px);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+footer .logo-img{height:26px}
+footer p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+
+/* ============ ADMIN ============ */
+#admin{position:fixed;inset:0;z-index:800;background:var(--ink);display:none;overflow-y:auto}
+#admin.on{display:block}
+.adm-wrap{max-width:880px;margin:0 auto;padding:60px 24px 100px}
+.adm-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:12px}
+.adm-head h2{font-family:var(--display);font-size:34px;text-transform:uppercase;font-weight:400}
+.adm-head h2 span{color:var(--accent)}
+.adm-note{font-size:13px;color:var(--muted);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 18px;margin:18px 0 30px;background:var(--panel)}
+.adm-note b{color:var(--text)}
+.adm-tabs{display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+.adm-tab{background:none;border:1px solid var(--line);color:var(--muted);padding:10px 22px;border-radius:2px;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.adm-tab.on{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent)}
+.adm-panel{display:none}
+.adm-panel.on{display:block}
+.adm-item{display:flex;gap:16px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:3px;padding:12px 16px;margin-bottom:10px}
+.adm-item img{width:84px;height:60px;object-fit:cover;border-radius:2px;flex-shrink:0}
+.adm-item .meta{flex:1;min-width:0}
+.adm-item .meta b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-item .meta span{font-family:var(--mono);font-size:11px;color:var(--accent-2);letter-spacing:.14em;text-transform:uppercase}
+.adm-hero{background:none;border:1px solid var(--line);color:var(--muted);padding:8px 14px;border-radius:2px;font-size:12px;letter-spacing:.06em;transition:.25s;white-space:nowrap}
+.adm-hero:hover{border-color:var(--accent);color:var(--accent)}
+.adm-hero.on{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast)}
+.adm-item .btns{display:flex;gap:8px;flex-shrink:0}
+.adm-del{background:none;border:1px solid rgba(220,90,90,.4);color:#d96b6b;padding:8px 14px;border-radius:2px;font-size:12px;letter-spacing:.08em;transition:.25s}
+.adm-del:hover{background:rgba(220,90,90,.12)}
+.adm-form{border:1px dashed var(--line);border-radius:3px;padding:24px;margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.adm-form h3{grid-column:1/-1;font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-2)}
+.adm-form .f-full{grid-column:1/-1}
+.adm-form .hint{grid-column:1/-1;font-size:12.5px;color:var(--muted);line-height:1.5}
+.adm-form .hint a{color:var(--accent-2);text-decoration:underline}
+.adm-actions{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.btn-sm{padding:11px 20px;font-size:12px}
+.btn-danger{border:1px solid rgba(220,90,90,.4);color:#d96b6b;background:none}
+.btn-danger:hover{background:rgba(220,90,90,.12)}
+#adm-gate{max-width:380px;margin:18vh auto 0;padding:0 24px;text-align:center}
+#adm-gate h2{font-family:var(--display);font-size:30px;text-transform:uppercase;font-weight:400;margin-bottom:8px}
+#adm-gate p{color:var(--muted);font-size:14px;margin-bottom:22px}
+#adm-gate input{text-align:center;margin-bottom:14px}
+.adm-close{position:fixed;top:18px;right:22px;background:none;border:none;color:var(--text);font-size:32px;z-index:810}
+.adm-close:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- LOGO INTRO PRELOADER -->
+<div id="aperture-loader" aria-hidden="true">
+  <div class="loader-bg" id="loaderBg"></div>
+  <img class="loader-logo js-loader-logo" src="images/logo.png" alt="aShutterVision">
+</div>
+<div id="camFlash" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#top" aria-label="aShutterVision home"><img class="logo-img js-logo" src="images/logo.png" alt="aShutterVision"></a>
+  <div class="nav-right">
+    <button class="mode-toggle" id="modeToggle" aria-label="Toggle light and dark mode" title="Light / dark mode">
+      <svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+      <svg class="ic-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+    </button>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#films">Films</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact" class="nav-cta">Book a Session</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="exif hero-reveal">DFW, Texas &nbsp;·&nbsp; Photo + Video &nbsp;·&nbsp; 10+ Years</div>
+    <h1 class="hero-reveal" id="heroTitle">Make your<br>vision a reality<span class="dot">.</span></h1>
+    <p class="hero-sub hero-reveal" id="heroSub"><strong>Photography &amp; cinematography</strong> for the moments that light up the dark — weddings, quinceañeras, music videos, concerts, and everything in between.</p>
+    <div class="hero-ctas hero-reveal">
+      <a href="#contact" class="btn btn-gold">Book a Session</a>
+      <a href="#work" class="btn btn-ghost">See the Work</a>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>Weddings <i>✦</i></span><span>Music Videos <i>✦</i></span><span>Portraits <i>✦</i></span><span>Concerts <i>✦</i></span><span>Quinceañeras <i>✦</i></span><span>Events <i>✦</i></span><span>Automotive <i>✦</i></span><span>Branding <i>✦</i></span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="exif">01 / Portfolio</div>
+      <h2>The Work<span class="dot">.</span></h2>
+      <p>A cross-section of what happens when the lights go low and the camera comes up. Tap any frame to view it full-size.</p>
+    </div>
+    <div class="filters reveal" id="filters"></div>
+    <div class="grid" id="gallery"></div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Image viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next">›</button>
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<!-- INSTAGRAM FEED (hidden until a feed URL is set in Admin) -->
+<section class="igfeed" id="feed">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="exif">Live / Instagram</div>
+      <h2>From the Feed<span class="dot">.</span></h2>
+      <p>Pulled straight from <a href="https://www.instagram.com/ashuttervision/" target="_blank" rel="noopener" style="color:var(--accent-2)">@ashuttervision</a> — the latest work, updated automatically. Tap any shot to see the post.</p>
+    </div>
+    <div class="ig-grid" id="igGrid"></div>
+  </div>
+</section>
+
+<!-- FILMS -->
+<section class="films" id="films">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="exif">02 / Motion</div>
+      <h2>Films &amp; Music Videos<span class="dot">.</span></h2>
+      <p>Full shoot-and-edit productions. Press play — these are real client deliveries, not sizzle reels.</p>
+    </div>
+    <div class="film-grid" id="filmGrid"></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="exif">03 / Services &amp; Rates</div>
+      <h2>Comeback Rates<span class="dot">.</span></h2>
+    </div>
+    <div class="intro-note reveal">
+      <p id="introNote">After <b>10+ years in the industry</b>, I'm getting back behind the camera and booking at introductory rates while I ramp back up. Translation: <b>experienced work, comeback prices.</b> These rates will increase as the calendar fills — now's the time to lock something in. <b>Consultations are always free.</b></p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc reveal">
+        <div class="tag">Photography</div>
+        <h3>Portrait Sessions</h3>
+        <div class="price">$100<small>/hr</small></div>
+        <p>Portraits, families, branding, and events.</p>
+        <ul>
+          <li>1-hour sessions</li>
+          <li>Professionally edited photos delivered</li>
+          <li>Final count set at your free consultation</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Book Photography</a>
+      </div>
+      <div class="svc feat reveal">
+        <div class="tag">✦ Limited Slots</div>
+        <h3>Music Video Special</h3>
+        <div class="price">$500</div>
+        <p>A complete music video — shot AND edited.</p>
+        <ul>
+          <li>2-hour shoot, fully produced</li>
+          <li>3 rounds of edits included</li>
+          <li>$100 deposit holds your date</li>
+          <li>$200 day of shoot · $200 at delivery</li>
+        </ul>
+        <a href="#contact" class="btn btn-gold">Save Your Date</a>
+      </div>
+      <div class="svc reveal">
+        <div class="tag">Weddings</div>
+        <h3>Small Weddings</h3>
+        <div class="price">$500</div>
+        <p>Intimate coverage for your day.</p>
+        <ul>
+          <li>Up to 3 hours of coverage</li>
+          <li>Edited photos in a private web album</li>
+          <li>Perfect for elopements &amp; micro-weddings</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Check My Date</a>
+      </div>
+      <div class="svc reveal">
+        <div class="tag">Video</div>
+        <h3>Cinematography</h3>
+        <div class="price">Hourly<small> — similar rates</small></div>
+        <p>Music videos, social content, promo work, and more.</p>
+        <ul>
+          <li>Full shoot + edit packages</li>
+          <li>Raw footage delivery if you have an editor</li>
+          <li>Built around your project</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Start a Project</a>
+      </div>
+      <div class="svc reveal">
+        <div class="tag">For Photographers &amp; Videographers</div>
+        <h3>Second Shooter</h3>
+        <div class="price">$60<small>/hr</small></div>
+        <p>An experienced extra set of hands on your gig — photography <em>and</em> cinematography.</p>
+        <ul>
+          <li>Second shooting (photo or video) — $60/hr</li>
+          <li>Non-shooting camera assist — $35/hr</li>
+          <li>Reliable, low-ego, been-there support</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Team Up</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="wrap about-flex">
+    <div class="reveal">
+      <div class="exif">04 / Behind the Lens</div>
+      <h2>Ten years in<span class="dot">.</span><br>Just warming up<span class="dot">.</span></h2>
+      <p id="about1">aShutterVision is a DFW-based photo and video studio built on one belief: <b>your moment deserves more than a snapshot.</b> From sparkler send-offs to smoke-filled stages and midnight drag strips, I chase the frames other cameras miss.</p>
+      <p id="about2">After a decade in the industry, I'm back behind the camera — bringing seasoned eyes at introductory rates. Samples of anything you see here are available on request, and <b>every consultation is free.</b></p>
+      <div class="stats">
+        <div class="stat"><div class="n">10+</div><div class="l">Years Experience</div></div>
+        <div class="stat"><div class="n">DFW</div><div class="l">Based &amp; Booking</div></div>
+        <div class="stat"><div class="n">Free</div><div class="l">Consultations</div></div>
+      </div>
+    </div>
+    <div class="about-img reveal"><img src="images/concert.jpg" alt="Concert stage with dramatic light beams" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap contact-flex">
+    <div class="c-left reveal">
+      <div class="exif">05 / Get In Touch</div>
+      <h2 class="big-h">Let's shoot<span class="dot">.</span></h2>
+      <p>Tell me about your project — a date, a vibe, a song, a venue. I'll get back to you with availability and a plan. No pressure, no obligation.</p>
+      <a class="mail" href="mailto:contactus@ashuttervision.com">contactus@ashuttervision.com</a>
+      <div class="socials">
+        <a href="https://www.instagram.com/ashuttervision/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.facebook.com/aShutterVision/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M15.5 3.5h-2.8c-2 0-3.4 1.4-3.4 3.5v2.6H6.6v3.3h2.7v7.6h3.4v-7.6h2.8l.5-3.3h-3.3V7.3c0-.6.3-.9 1-.9h2.4z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/watch?v=iKNNZd7OmMc" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5.5" width="20" height="13" rx="3.5"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+    <form id="contactForm" class="reveal" novalidate>
+      <div><label for="cf-name">Name</label><input id="cf-name" name="name" type="text" required placeholder="Your name"></div>
+      <div><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" required placeholder="you@email.com"></div>
+      <div><label for="cf-phone">Phone (optional)</label><input id="cf-phone" name="phone" type="tel" placeholder="(555) 555-5555"></div>
+      <div><label for="cf-service">Service</label>
+        <select id="cf-service" name="service" required>
+          <option value="">Select a service…</option>
+          <option>Photography Session</option>
+          <option>Music Video Special</option>
+          <option>Small Wedding</option>
+          <option>Cinematography / Video Project</option>
+          <option>Second Shooter / Camera Assist</option>
+          <option>Something Else</option>
+        </select>
+      </div>
+      <div><label for="cf-contact">Preferred contact method</label>
+        <select id="cf-contact" name="preferred_contact" required>
+          <option value="">How should I reach you?</option>
+          <option>Email</option>
+          <option>Phone Call</option>
+          <option>Text Message</option>
+          <option>Instagram DM</option>
+        </select>
+      </div>
+      <div><label for="cf-budget">Estimated budget</label>
+        <select id="cf-budget" name="estimated_budget">
+          <option value="">Select a range (optional)…</option>
+          <option>Under $250</option>
+          <option>$250 – $500</option>
+          <option>$500 – $1,000</option>
+          <option>$1,000+</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="f-full"><label for="cf-date">Ideal date (optional)</label><input id="cf-date" name="preferred_date" type="date"></div>
+      <div class="f-full"><label for="cf-msg">Tell me about your vision</label><textarea id="cf-msg" name="message" required placeholder="The event, the vibe, the location — whatever you've got so far."></textarea></div>
+      <div class="form-msg" id="formMsg"></div>
+      <div class="f-full"><button type="submit" class="btn btn-gold" id="cfSubmit" style="width:100%;justify-content:center">Send It →</button></div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#top"><img class="logo-img js-logo" src="images/logo.png" alt="aShutterVision"></a>
+  <p>© <span id="yr"></span> aShutterVision · DFW, Texas · Make your vision a reality.</p>
+</footer>
+
+<!-- ADMIN (access via yoursite.com/#admin — no visible link on the page) -->
+<div id="admin">
+  <button class="adm-close" onclick="location.hash=''" aria-label="Close admin">×</button>
+  <div id="adm-gate">
+    <h2>Admin<span class="dot">.</span></h2>
+    <p>Enter your admin password to manage the site.</p>
+    <input type="password" id="admPass" placeholder="Password">
+    <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="admLogin()">Unlock</button>
+    <p id="admErr" style="color:#d96b6b;display:none;margin-top:12px">Wrong password — try again.</p>
+  </div>
+  <div class="adm-wrap" id="admApp" style="display:none">
+    <div class="adm-head">
+      <h2>Site <span>Manager</span></h2>
+      <button class="btn btn-ghost btn-sm" onclick="location.hash=''">← Back to site</button>
+    </div>
+    <div class="adm-note">This page is only reachable at <b>/#admin</b> — there's no link anywhere on the site. Changes preview instantly in this browser. <b>To publish for all visitors:</b> click <b>Export config</b>, open your index.html, replace the marked CONFIG block with the exported one, and re-upload that single file to your host. Tip: for permanent photos, uploading the image file to your host's /images/ folder and using its URL keeps the site faster than device uploads.</div>
+    <div class="adm-tabs">
+      <button class="adm-tab on" data-tab="photos">Photos</button>
+      <button class="adm-tab" data-tab="videos">Videos</button>
+      <button class="adm-tab" data-tab="insta">Instagram</button>
+      <button class="adm-tab" data-tab="text">Logo &amp; Text</button>
+    </div>
+
+    <div class="adm-panel on" id="panel-photos">
+      <div id="admPhotoList"></div>
+      <div class="adm-form">
+        <h3>+ Add a photo</h3>
+        <div class="f-full"><label>Image URL</label><input id="apUrl" type="url" placeholder="https://… (direct link to a .jpg/.png, e.g. from your host or image CDN)"></div>
+        <div class="f-full"><label>…or upload from this device</label><input id="apFile" type="file" accept="image/*"><p class="hint" id="apFileStatus" style="margin-top:6px"></p></div>
+        <div><label>Title</label><input id="apTitle" type="text" placeholder="e.g. Sparkler Sendoff"></div>
+        <div><label>Category</label><input id="apCat" type="text" placeholder="e.g. Weddings" list="catList"><datalist id="catList"></datalist></div>
+        <div class="f-full"><label>Caption / location (optional)</label><input id="apMeta" type="text" placeholder="e.g. WEDDING · FORT WORTH, TX"></div>
+        <div class="f-full"><button class="btn btn-gold btn-sm" onclick="admAddPhoto()">Add Photo</button></div>
+      </div>
+    </div>
+
+    <div class="adm-panel" id="panel-videos">
+      <div id="admVideoList"></div>
+      <div class="adm-form">
+        <h3>+ Add a YouTube video</h3>
+        <div class="f-full"><label>YouTube link</label><input id="avUrl" type="url" placeholder="https://www.youtube.com/watch?v=…"></div>
+        <div class="f-full"><label>Title</label><input id="avTitle" type="text" placeholder="e.g. Artist Name — Song Title"></div>
+        <div class="f-full"><button class="btn btn-gold btn-sm" onclick="admAddVideo()">Add Video</button></div>
+      </div>
+    </div>
+
+    <div class="adm-panel" id="panel-insta">
+      <div class="adm-form">
+        <h3>Instagram feed</h3>
+        <p class="hint">Instagram doesn't allow websites to pull your grid directly without an approved API token, so this uses a free feed service as the bridge. One-time setup (~5 min):<br>
+        1. Go to <a href="https://behold.so" target="_blank" rel="noopener">behold.so</a> and sign in with the Instagram account.<br>
+        2. Create a feed, pick <b>JSON feed</b> (not widget), set it to your latest posts (up to 50).<br>
+        3. Copy the feed URL it gives you and paste it below.<br>
+        The site then renders your posts as a clean image grid — no Instagram branding, no embeds, just your shots, each linking to its post. New posts show up automatically.</p>
+        <div class="f-full"><label>Behold JSON feed URL</label><input id="aiUrl" type="url" placeholder="https://feeds.behold.so/…"></div>
+        <div class="f-full"><button class="btn btn-gold btn-sm" onclick="admSaveIg()">Save Feed URL</button> <button class="btn btn-ghost btn-sm" onclick="admClearIg()" style="margin-left:8px">Remove Feed</button></div>
+        <p class="hint" id="igStatus"></p>
+      </div>
+    </div>
+
+    <div class="adm-panel" id="panel-text">
+      <div class="adm-form">
+        <h3>Logo &amp; site text</h3>
+        <div class="f-full"><label>Hero background image URL (the big landing photo)</label><input id="atHeroImg" type="url" placeholder="https://… — or upload below. Leave blank to keep current."></div>
+        <div class="f-full"><label>…or upload a hero image</label><input id="atHeroFile" type="file" accept="image/*"><p class="hint" id="atHeroStatus" style="margin-top:6px"></p></div>
+        <div class="f-full"><label>Logo image URL (leave blank to keep current logo)</label><input id="atLogo" type="url" placeholder="https://…/logo.png"></div>
+        <div class="f-full"><label>…or upload a logo (transparent PNG recommended)</label><input id="atLogoFile" type="file" accept="image/*"><p class="hint" id="atLogoStatus" style="margin-top:6px"></p></div>
+        <div class="f-full"><label>Hero headline (use | for a line break)</label><input id="atHero" type="text" placeholder="Make your|vision a reality"></div>
+        <div class="f-full"><label>Hero subtext</label><textarea id="atHeroSub" style="min-height:70px"></textarea></div>
+        <div class="f-full"><label>Services intro note</label><textarea id="atIntro" style="min-height:90px"></textarea></div>
+        <div class="f-full"><label>About — paragraph 1</label><textarea id="atAbout1" style="min-height:90px"></textarea></div>
+        <div class="f-full"><label>About — paragraph 2</label><textarea id="atAbout2" style="min-height:90px"></textarea></div>
+        <h3 style="margin-top:12px">Intro Sound</h3>
+        <div class="f-full"><label>Shutter sound effect (plays with the intro flash)</label>
+          <select id="atSound">
+            <option value="digital">Digital Camera — focus beeps + click</option>
+            <option value="dslr">DSLR — crisp clack</option>
+            <option value="classic">Classic SLR — mechanical click-clack</option>
+            <option value="soft">Mirrorless — soft snick</option>
+            <option value="film">Film Camera — click + advance ratchet</option>
+            <option value="off">Off — silent intro</option>
+          </select>
+        </div>
+        <div class="f-full"><button type="button" class="btn btn-ghost btn-sm" onclick="playShutter(document.getElementById('atSound').value)">▶ Preview Sound</button></div>
+        <h3 style="margin-top:12px">Security</h3>
+        <div class="f-full"><label>New admin password (leave blank to keep current)</label><input id="atPass" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+        <div class="f-full"><button class="btn btn-gold btn-sm" onclick="admSaveText()">Save Changes</button></div>
+      </div>
+    </div>
+
+    <div class="adm-actions">
+      <button class="btn btn-ghost btn-sm" onclick="admExport()">Export config</button>
+      <button class="btn-danger btn btn-sm" onclick="admReset()">Reset to defaults</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+/* ===== CONFIG START (to publish admin changes for everyone: replace from here to CONFIG END with your exported config) ===== */
+const DEFAULT_GALLERY = [
+  {src:'images/quince.jpg', title:'Golden Hour', cat:'Events', meta:'QUINCEAÑERA · DFW, TX'},
+  {src:'images/wedding-exit.jpg', title:'Sparkler Sendoff', cat:'Weddings', meta:'WEDDING · DFW, TX'},
+  {src:'images/starlight-couple.jpg', title:'Under the Stars', cat:'Portraits', meta:'COUPLES · NORTH TEXAS'},
+  {src:'images/concert.jpg', title:'Full Beam', cat:'Concerts', meta:'LIVE SHOW · DFW'},
+  {src:'images/drag-night.jpg', title:'Launch Night', cat:'Automotive', meta:'DRAG NIGHT · TEXAS'},
+  {src:'images/music-video.jpg', title:'On Set', cat:'Music Videos', meta:'MUSIC VIDEO · PRODUCTION STILL'}
+];
+const DEFAULT_VIDEOS = [
+  {id:'iKNNZd7OmMc', title:'Music Video'},
+  {id:'aVjF1A0Rk3s', title:'Music Video'}
+];
+const DEFAULT_SETTINGS = { logoUrl:'', igFeedUrl:'', heroImage:'', adminPass:'', shutterSound:'digital', heroTitle:'', heroSub:'', introNote:'', about1:'', about2:'' };
+const ADMIN_PASSWORD = 'avision2026';
+/* ===== CONFIG END ===== */
+const GK='asv_gallery_v1', VK='asv_videos_v1', SK='asv_settings_v1';
+
+function loadJSON(k,def){ try{const s=localStorage.getItem(k); if(s) return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(def)); }
+let GALLERY = loadJSON(GK,DEFAULT_GALLERY);
+let VIDEOS = loadJSON(VK,DEFAULT_VIDEOS);
+let SETTINGS = Object.assign({},DEFAULT_SETTINGS,loadJSON(SK,{}));
+
+/* ================= SETTINGS / TEXT ================= */
+function applySettings(){
+  if(SETTINGS.logoUrl){ document.querySelectorAll('.js-logo,.js-loader-logo').forEach(i=>i.src=SETTINGS.logoUrl); }
+  if(SETTINGS.heroImage){ document.querySelector('.hero-bg').style.backgroundImage=`url('${SETTINGS.heroImage}')`; }
+  if(SETTINGS.heroTitle){
+    const clean=SETTINGS.heroTitle.replace(/\.$/,'');
+    document.getElementById('heroTitle').innerHTML=clean.split('|').map(s=>s.trim()).join('<br>')+'<span class="dot">.</span>';
+  }
+  if(SETTINGS.heroSub) document.getElementById('heroSub').textContent=SETTINGS.heroSub;
+  if(SETTINGS.introNote) document.getElementById('introNote').textContent=SETTINGS.introNote;
+  if(SETTINGS.about1) document.getElementById('about1').textContent=SETTINGS.about1;
+  if(SETTINGS.about2) document.getElementById('about2').textContent=SETTINGS.about2;
+}
+
+/* ================= MODE TOGGLE ================= */
+document.getElementById('modeToggle').addEventListener('click',()=>{
+  const light=document.documentElement.dataset.mode==='light';
+  if(light){ delete document.documentElement.dataset.mode; localStorage.setItem('asv_mode','dark'); }
+  else{ document.documentElement.dataset.mode='light'; localStorage.setItem('asv_mode','light'); }
+});
+
+/* ================= PRELOADER ================= */
+function playShutter(kind){
+  kind = kind || SETTINGS.shutterSound || 'digital';
+  if(kind==='off') return;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;
+    const ctx=new C();
+    if(ctx.state==='suspended') ctx.resume().catch(()=>{});
+    const t=ctx.currentTime;
+    const noise=(at,dur,freq,q,g)=>{
+      const len=Math.max(1,Math.floor(ctx.sampleRate*dur));
+      const buf=ctx.createBuffer(1,len,ctx.sampleRate);
+      const d=buf.getChannelData(0);
+      for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.2);
+      const s=ctx.createBufferSource(); s.buffer=buf;
+      const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq; f.Q.value=q;
+      const gn=ctx.createGain(); gn.gain.value=g;
+      s.connect(f); f.connect(gn); gn.connect(ctx.destination);
+      s.start(t+at);
+    };
+    const tone=(at,dur,freq,type,g)=>{
+      const o=ctx.createOscillator(); o.type=type; o.frequency.value=freq;
+      const gn=ctx.createGain();
+      gn.gain.setValueAtTime(0.0001,t+at);
+      gn.gain.linearRampToValueAtTime(g,t+at+.006);
+      gn.gain.exponentialRampToValueAtTime(0.0001,t+at+dur);
+      o.connect(gn); gn.connect(ctx.destination);
+      o.start(t+at); o.stop(t+at+dur+.03);
+    };
+    switch(kind){
+      case 'digital':  /* compact digital cam: focus beep-beep, tight click */
+        tone(0,.06,2350,'sine',.22); tone(.085,.06,2350,'sine',.22);
+        noise(.19,.025,3200,1.5,.45); noise(.222,.035,1500,1.1,.35); break;
+      case 'dslr':     /* crisp modern DSLR clack */
+        noise(0,.018,3600,1.7,.5); noise(.04,.032,2100,1.2,.6); noise(.046,.028,850,.9,.25); break;
+      case 'classic':  /* mechanical SLR click-clack */
+        noise(0,.028,2600,1.1,.45); noise(.065,.05,1800,1,.6); noise(.07,.04,700,.8,.3); break;
+      case 'soft':     /* quiet mirrorless snick */
+        noise(0,.028,2300,1.3,.22); noise(.028,.022,950,1,.12); break;
+      case 'film':     /* shutter + film advance ratchet */
+        noise(0,.03,2400,1.2,.5); noise(.02,.03,800,.9,.25);
+        noise(.1,.018,1900,1.5,.3); noise(.16,.018,1700,1.5,.26); noise(.22,.018,1500,1.5,.22); break;
+    }
+  }catch(e){}
+}
+const loader = document.getElementById('aperture-loader');
+const camFlash = document.getElementById('camFlash');
+const seen = sessionStorage.getItem('asv_seen');
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function openSite(){ document.body.classList.add('loaded'); }
+if(seen || reduced){ loader.remove(); camFlash.remove(); requestAnimationFrame(()=>setTimeout(openSite,60)); }
+else{
+  sessionStorage.setItem('asv_seen','1');
+  // configured hero image, defocused, behind the logo
+  document.getElementById('loaderBg').style.backgroundImage = `url('${SETTINGS.heroImage||'images/starlight-couple.jpg'}')`;
+  setTimeout(()=>{ loader.classList.add('in'); }, 150);    // logo fades/sharpens in, big and centered
+  setTimeout(()=>{ loader.classList.add('rise'); }, 1150); // logo pushes up toward the stars + focus pull begins
+  setTimeout(()=>{ camFlash.classList.add('on'); playShutter(); }, 2150); // logo hits apex, image in focus → flash + shutter
+  setTimeout(()=>{ loader.classList.add('open'); openSite(); camFlash.classList.add('fade'); }, 2300); // flash decays onto the page
+  setTimeout(()=>{ loader.remove(); camFlash.remove(); }, 3100);
+}
+
+/* ================= NAV ================= */
+const nav=document.getElementById('nav'), burger=document.getElementById('burger'), navLinks=document.getElementById('navLinks');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+burger.addEventListener('click',()=>{burger.classList.toggle('on');navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('on');navLinks.classList.remove('open')}));
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* ================= MARQUEE ================= */
+const mt=document.getElementById('marqueeTrack'); mt.innerHTML+=mt.innerHTML;
+
+/* ================= GALLERY ================= */
+const galleryEl=document.getElementById('gallery'), filtersEl=document.getElementById('filters');
+let currentFilter='All', lbIndex=0, visibleItems=[];
+function cats(){ return ['All',...new Set(GALLERY.map(g=>g.cat))]; }
+function renderFilters(){
+  filtersEl.innerHTML='';
+  cats().forEach(c=>{
+    const b=document.createElement('button');
+    b.className='chip'+(c===currentFilter?' on':''); b.textContent=c;
+    b.onclick=()=>{currentFilter=c;renderFilters();renderGallery();};
+    filtersEl.appendChild(b);
+  });
+}
+function renderGallery(){
+  galleryEl.innerHTML='';
+  visibleItems = GALLERY.filter(g=>currentFilter==='All'||g.cat===currentFilter);
+  visibleItems.forEach((g,i)=>{
+    const d=document.createElement('div');
+    d.className='card reveal in';
+    d.innerHTML=`<img src="${g.src}" alt="${g.title} — ${g.cat}" loading="lazy">
+      <div class="card-info"><div class="cat">${g.meta||g.cat}</div><h3>${g.title}</h3></div>`;
+    d.onclick=()=>openLB(i);
+    galleryEl.appendChild(d);
+  });
+  const ig=document.createElement('a');
+  ig.className='card card-ig'; ig.href='https://www.instagram.com/ashuttervision/'; ig.target='_blank'; ig.rel='noopener';
+  ig.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none"/></svg>
+    <p>The full feed lives on Instagram — new work drops there first.</p><span class="fol">@ashuttervision →</span>`;
+  galleryEl.appendChild(ig);
+}
+/* Lightbox */
+const lb=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg'), lbCap=document.getElementById('lbCap');
+function openLB(i){ lbIndex=i; updateLB(); lb.classList.add('on'); document.body.style.overflow='hidden'; }
+function closeLB(){ lb.classList.remove('on'); document.body.style.overflow=''; }
+function updateLB(){ const g=visibleItems[lbIndex]; lbImg.src=g.src; lbImg.alt=g.title; lbCap.innerHTML=`<b>${g.title}</b> &nbsp;·&nbsp; ${g.meta||g.cat}`; }
+function stepLB(n){ lbIndex=(lbIndex+n+visibleItems.length)%visibleItems.length; updateLB(); }
+document.getElementById('lbClose').onclick=closeLB;
+document.getElementById('lbPrev').onclick=e=>{e.stopPropagation();stepLB(-1)};
+document.getElementById('lbNext').onclick=e=>{e.stopPropagation();stepLB(1)};
+lb.onclick=e=>{ if(e.target===lb) closeLB(); };
+addEventListener('keydown',e=>{ if(!lb.classList.contains('on'))return; if(e.key==='Escape')closeLB(); if(e.key==='ArrowLeft')stepLB(-1); if(e.key==='ArrowRight')stepLB(1); });
+
+/* ================= INSTAGRAM FEED ================= */
+async function renderIgFeed(){
+  const sec=document.getElementById('feed'), grid=document.getElementById('igGrid');
+  if(!SETTINGS.igFeedUrl){ sec.classList.remove('show'); return; }
+  try{
+    const r=await fetch(SETTINGS.igFeedUrl); if(!r.ok) throw new Error('feed unreachable');
+    const j=await r.json();
+    const posts=(j.posts||j.media||j).slice ? (j.posts||j.media||j).slice(0,50) : [];
+    if(!posts.length) throw new Error('no posts');
+    grid.innerHTML='';
+    posts.forEach(p=>{
+      const img=(p.sizes&&p.sizes.medium&&p.sizes.medium.mediaUrl)||p.thumbnailUrl||p.mediaUrl||p.media_url;
+      if(!img) return;
+      const a=document.createElement('a');
+      a.className='ig-item'; a.href=p.permalink||'https://www.instagram.com/ashuttervision/'; a.target='_blank'; a.rel='noopener';
+      a.innerHTML=`<img src="${img}" alt="Instagram post by aShutterVision" loading="lazy">`;
+      grid.appendChild(a);
+    });
+    sec.classList.add('show'); watchReveals();
+  }catch(err){ console.warn('IG feed:',err.message); sec.classList.remove('show'); }
+}
+
+/* ================= FILMS ================= */
+const filmGrid=document.getElementById('filmGrid');
+function ytId(url){ const m=String(url).match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{11})/); return m?m[1]:(String(url).match(/^[A-Za-z0-9_-]{11}$/)?url:null); }
+function renderVideos(){
+  filmGrid.innerHTML='';
+  VIDEOS.forEach(v=>{
+    const d=document.createElement('div');
+    d.className='film reveal in';
+    d.innerHTML=`<img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.title}" loading="lazy">
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M6 3l16 9-16 9z"/></svg></div>
+      <div class="film-title">${v.title}</div>`;
+    d.onclick=()=>{ d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" title="${v.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`; };
+    filmGrid.appendChild(d);
+  });
+}
+
+/* ================= SCROLL REVEAL ================= */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.12});
+function watchReveals(){ document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el)); }
+
+/* ================= CONTACT FORM ================= */
+const form=document.getElementById('contactForm'), formMsg=document.getElementById('formMsg'), cfSubmit=document.getElementById('cfSubmit');
+form.addEventListener('submit', async e=>{
+  e.preventDefault();
+  if(!form.reportValidity()) return;
+  cfSubmit.disabled=true; cfSubmit.textContent='Sending…'; formMsg.className='form-msg';
+  const data=Object.fromEntries(new FormData(form).entries());
+  data._subject='📸 New inquiry from ashuttervision.com — '+(data.service||'General');
+  data._template='table';
+  try{
+    const r=await fetch('https://formsubmit.co/ajax/contactus@ashuttervision.com',{
+      method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(data)
+    });
+    if(!r.ok) throw new Error();
+    formMsg.className='form-msg ok';
+    formMsg.textContent="Sent! I'll get back to you within 24 hours. Talk soon. 📸";
+    form.reset();
+  }catch(err){
+    formMsg.className='form-msg err';
+    formMsg.innerHTML='Hmm, that didn\'t go through. Email me directly at <a href="mailto:contactus@ashuttervision.com" style="color:var(--accent)">contactus@ashuttervision.com</a> and I\'ll get right back to you.';
+  }
+  cfSubmit.disabled=false; cfSubmit.textContent='Send It →';
+});
+
+/* ================= ADMIN ================= */
+let pendingPhoto='', pendingHero='', pendingLogo='';
+function fileToDataUrl(file,maxW,cb){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    if(file.type==='image/png' && file.size<400000){ cb(fr.result); return; } // keep small PNGs (logos) untouched for transparency
+    const img=new Image();
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/img.width);
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*scale); c.height=Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/jpeg',.82));
+    };
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+const adminEl=document.getElementById('admin'), gate=document.getElementById('adm-gate'), admApp=document.getElementById('admApp');
+let admUnlocked = sessionStorage.getItem('asv_adm')==='1';
+function routeAdmin(){
+  const on = location.hash==='#admin';
+  adminEl.classList.toggle('on',on);
+  document.body.style.overflow = on?'hidden':'';
+  if(on){ gate.style.display=admUnlocked?'none':'block'; admApp.style.display=admUnlocked?'block':'none'; if(admUnlocked) admRender(); }
+}
+addEventListener('hashchange',routeAdmin);
+function admLogin(){
+  if(document.getElementById('admPass').value===(SETTINGS.adminPass||ADMIN_PASSWORD)){
+    admUnlocked=true; sessionStorage.setItem('asv_adm','1'); routeAdmin();
+  } else document.getElementById('admErr').style.display='block';
+}
+document.getElementById('admPass').addEventListener('keydown',e=>{if(e.key==='Enter')admLogin()});
+document.getElementById('apFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  fileToDataUrl(f,1600,d=>{ pendingPhoto=d; document.getElementById('apFileStatus').textContent='✓ '+f.name+' ready — fill in the title/category and click Add Photo.'; });
+});
+document.getElementById('atHeroFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  fileToDataUrl(f,2000,d=>{ pendingHero=d; document.getElementById('atHeroStatus').textContent='✓ '+f.name+' ready — click Save Changes to apply.'; });
+});
+document.getElementById('atLogoFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  fileToDataUrl(f,1200,d=>{ pendingLogo=d; document.getElementById('atLogoStatus').textContent='✓ '+f.name+' ready — click Save Changes to apply.'; });
+});
+document.querySelectorAll('.adm-tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.adm-tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.adm-panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); document.getElementById('panel-'+t.dataset.tab).classList.add('on');
+});
+function persist(){
+  try{
+    localStorage.setItem(GK,JSON.stringify(GALLERY));
+    localStorage.setItem(VK,JSON.stringify(VIDEOS));
+    localStorage.setItem(SK,JSON.stringify(SETTINGS));
+  }catch(e){
+    alert('Browser storage is full — uploaded images take a lot of space. Remove an upload or use image URLs (host the file and paste its link) instead.');
+  }
+  refreshPublic();
+}
+function refreshPublic(){ applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); }
+function admRender(){
+  const pl=document.getElementById('admPhotoList'); pl.innerHTML='';
+  const curHero = SETTINGS.heroImage || 'images/starlight-couple.jpg';
+  GALLERY.forEach((g,i)=>{
+    const d=document.createElement('div'); d.className='adm-item';
+    d.innerHTML=`<img src="${g.src}" alt=""><div class="meta"><b>${g.title}</b><span>${g.cat}</span></div>`;
+    const btns=document.createElement('div'); btns.className='btns';
+    const hero=document.createElement('button');
+    const isHero = g.src===curHero;
+    hero.className='adm-hero'+(isHero?' on':'');
+    hero.textContent=isHero?'★ Hero':'Set as Hero';
+    hero.title='Make this the giant landing-page image (and the intro animation background)';
+    hero.onclick=()=>{ SETTINGS.heroImage=g.src; persist(); admRender(); };
+    const del=document.createElement('button'); del.className='adm-del'; del.textContent='Remove';
+    del.onclick=()=>{ if(confirm('Remove "'+g.title+'" from the site?')){ GALLERY.splice(i,1); persist(); admRender(); } };
+    btns.appendChild(hero); btns.appendChild(del);
+    d.appendChild(btns); pl.appendChild(d);
+  });
+  const vl=document.getElementById('admVideoList'); vl.innerHTML='';
+  VIDEOS.forEach((v,i)=>{
+    const d=document.createElement('div'); d.className='adm-item';
+    d.innerHTML=`<img src="https://i.ytimg.com/vi/${v.id}/default.jpg" alt=""><div class="meta"><b>${v.title}</b><span>youtube.com/watch?v=${v.id}</span></div>`;
+    const del=document.createElement('button'); del.className='adm-del'; del.textContent='Remove';
+    del.onclick=()=>{ if(confirm('Remove this video?')){ VIDEOS.splice(i,1); persist(); admRender(); } };
+    d.appendChild(del); vl.appendChild(d);
+  });
+  const dl=document.getElementById('catList'); dl.innerHTML='';
+  [...new Set(GALLERY.map(g=>g.cat))].forEach(c=>{ const o=document.createElement('option'); o.value=c; dl.appendChild(o); });
+  document.getElementById('aiUrl').value=SETTINGS.igFeedUrl||'';
+  document.getElementById('igStatus').textContent=SETTINGS.igFeedUrl?'✓ Feed connected — your grid is live on the page.':'No feed connected yet — the Instagram section is hidden on the site.';
+  document.getElementById('atSound').value=SETTINGS.shutterSound||'digital';
+  document.getElementById('atHeroImg').value=(SETTINGS.heroImage&&!SETTINGS.heroImage.startsWith('data:'))?SETTINGS.heroImage:'';
+  document.getElementById('atLogo').value=(SETTINGS.logoUrl&&!SETTINGS.logoUrl.startsWith('data:'))?SETTINGS.logoUrl:'';
+  document.getElementById('atHero').value=SETTINGS.heroTitle||'Make your|vision a reality';
+  document.getElementById('atHeroSub').value=SETTINGS.heroSub||document.getElementById('heroSub').textContent.trim();
+  document.getElementById('atIntro').value=SETTINGS.introNote||document.getElementById('introNote').textContent.trim();
+  document.getElementById('atAbout1').value=SETTINGS.about1||document.getElementById('about1').textContent.trim();
+  document.getElementById('atAbout2').value=SETTINGS.about2||document.getElementById('about2').textContent.trim();
+}
+function admAddPhoto(){
+  const url=document.getElementById('apUrl').value.trim();
+  const title=document.getElementById('apTitle').value.trim()||'Untitled';
+  const cat=document.getElementById('apCat').value.trim()||'Events';
+  const meta=document.getElementById('apMeta').value.trim();
+  const src2 = url || pendingPhoto;
+  if(!src2){ alert('Paste an image URL or upload a file first.'); return; }
+  GALLERY.push({src:src2,title,cat,meta}); pendingPhoto=''; persist(); admRender();
+  ['apUrl','apTitle','apCat','apMeta','apFile'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('apFileStatus').textContent='';
+}
+function admAddVideo(){
+  const url=document.getElementById('avUrl').value.trim();
+  const title=document.getElementById('avTitle').value.trim()||'Music Video';
+  const id=ytId(url);
+  if(!id){ alert("That doesn't look like a YouTube link. Paste the full watch URL."); return; }
+  VIDEOS.push({id,title}); persist(); admRender();
+  document.getElementById('avUrl').value=''; document.getElementById('avTitle').value='';
+}
+function admSaveIg(){
+  SETTINGS.igFeedUrl=document.getElementById('aiUrl').value.trim();
+  persist(); admRender();
+}
+function admClearIg(){ SETTINGS.igFeedUrl=''; persist(); admRender(); }
+function admSaveText(){
+  const heroUrl=document.getElementById('atHeroImg').value.trim();
+  if(heroUrl||pendingHero) SETTINGS.heroImage=heroUrl||pendingHero;
+  const logoUrl=document.getElementById('atLogo').value.trim();
+  if(logoUrl||pendingLogo) SETTINGS.logoUrl=logoUrl||pendingLogo;
+  SETTINGS.shutterSound=document.getElementById('atSound').value;
+  const newPass=document.getElementById('atPass').value;
+  if(newPass) SETTINGS.adminPass=newPass;
+  pendingHero=''; pendingLogo='';
+  document.getElementById('atHeroStatus').textContent=''; document.getElementById('atLogoStatus').textContent='';
+  document.getElementById('atPass').value='';
+  SETTINGS.heroTitle=document.getElementById('atHero').value.trim();
+  SETTINGS.heroSub=document.getElementById('atHeroSub').value.trim();
+  SETTINGS.introNote=document.getElementById('atIntro').value.trim();
+  SETTINGS.about1=document.getElementById('atAbout1').value.trim();
+  SETTINGS.about2=document.getElementById('atAbout2').value.trim();
+  persist();
+  alert('Saved — the page has been updated.'+(SETTINGS.adminPass?' (Password change applies on this device now; export + republish to make it permanent everywhere.)':''));
+}
+function admExport(){
+  const s=Object.assign({},SETTINGS); const pw=s.adminPass||ADMIN_PASSWORD; s.adminPass='';
+  const cfg=[
+'/* ===== ASHUTTERVISION CONFIG EXPORT ===================================',
+'HOW TO PUBLISH THESE CHANGES SO ALL VISITORS SEE THEM:',
+'1. Open index.html in any text editor.',
+'2. Find the block between "CONFIG START" and "CONFIG END".',
+'3. Delete everything between those two marker lines and paste in',
+'   everything BELOW this comment block instead.',
+'4. Save, then re-upload index.html to your hosting service. Done.',
+'======================================================================= */',
+'',
+'const DEFAULT_GALLERY = '+JSON.stringify(GALLERY,null,2)+';',
+'const DEFAULT_VIDEOS = '+JSON.stringify(VIDEOS,null,2)+';',
+'const DEFAULT_SETTINGS = '+JSON.stringify(s,null,2)+';',
+'const ADMIN_PASSWORD = '+JSON.stringify(pw)+';'
+  ].join('\n');
+  const blob=new Blob([cfg],{type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ashuttervision-config.txt'; a.click();
+}
+function admReset(){
+  if(confirm('Reset photos, videos, and text back to the original defaults?')){
+    [GK,VK,SK].forEach(k=>localStorage.removeItem(k));
+    GALLERY=loadJSON(GK,DEFAULT_GALLERY); VIDEOS=loadJSON(VK,DEFAULT_VIDEOS); SETTINGS=Object.assign({},DEFAULT_SETTINGS);
+    location.reload();
+  }
+}
+
+/* ================= INIT ================= */
+applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); watchReveals(); routeAdmin();
+</script>
+</body>
+</html>
