@@ -115,7 +115,8 @@ button{font-family:inherit;cursor:pointer}
 /* ============ HERO ============ */
 .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;padding:0 clamp(20px,4vw,56px) clamp(56px,9vh,110px);overflow:hidden;
   --text:#f2ede4;--muted:#b9c4c4}
-.hero-bg{position:absolute;inset:0;background:url('images/wedding-exit.jpg') center/cover no-repeat;animation:kenburns 22s ease-out forwards;will-change:transform}
+.hero-bg{position:absolute;inset:0;background:url('images/wedding-exit.jpg') center/cover no-repeat;animation:kenburns 22s ease-out forwards;will-change:transform,opacity;opacity:0;transition:opacity 1.4s ease}
+.hero-bg.show{opacity:1}
 @keyframes kenburns{from{transform:scale(1.12)}to{transform:scale(1)}}
 .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,16,20,.55) 0%,rgba(10,16,20,.15) 40%,rgba(10,16,20,.9) 100%)}
 .hero-inner{position:relative;z-index:2;max-width:1200px;width:100%;margin:0 auto}
@@ -349,7 +350,8 @@ footer p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(-
 
 <!-- HERO -->
 <header class="hero" id="top">
-  <div class="hero-bg"></div>
+  <div class="hero-bg" id="heroBgA"></div>
+  <div class="hero-bg" id="heroBgB"></div>
   <div class="hero-inner">
     <div class="exif hero-reveal">DFW, Texas &nbsp;·&nbsp; Photo + Video &nbsp;·&nbsp; 10+ Years</div>
     <h1 class="hero-reveal" id="heroTitle">Make your<br>vision a reality<span class="dot">.</span></h1>
@@ -692,6 +694,12 @@ const DEFAULT_VIDEOS = [
 const DEFAULT_SETTINGS = { logoUrl:'', igFeedUrl:'', heroImage:'', adminPass:'', shutterSound:'digital', heroTitle:'', heroSub:'', introNote:'', about1:'', about2:'' };
 const ADMIN_PASSWORD = 'avision2026';
 /* ===== CONFIG END ===== */
+
+/* HERO SLIDESHOW SPEED — seconds between hero image changes.
+   Every photo in the portfolio rotates through the big landing image.
+   Change the number below to speed it up or slow it down. Set to 0 to
+   turn rotation off (hero stays on the ★ Hero image only). */
+const HERO_SLIDE_SECONDS = 5;
 const GK='asv_gallery_v1', VK='asv_videos_v1', SK='asv_settings_v1';
 
 function loadJSON(k,def){ try{const s=localStorage.getItem(k); if(s) return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(def)); }
@@ -702,7 +710,7 @@ let SETTINGS = Object.assign({},DEFAULT_SETTINGS,loadJSON(SK,{}));
 /* ================= SETTINGS / TEXT ================= */
 function applySettings(){
   if(SETTINGS.logoUrl){ document.querySelectorAll('.js-logo,.js-loader-logo').forEach(i=>i.src=SETTINGS.logoUrl); }
-  if(SETTINGS.heroImage){ document.querySelector('.hero-bg').style.backgroundImage=`url('${SETTINGS.heroImage}')`; }
+  /* hero image is applied by the slideshow (see startHeroSlideshow) */
   if(SETTINGS.heroTitle){
     const clean=SETTINGS.heroTitle.replace(/\.$/,'');
     document.getElementById('heroTitle').innerHTML=clean.split('|').map(s=>s.trim()).join('<br>')+'<span class="dot">.</span>';
@@ -719,6 +727,27 @@ document.getElementById('modeToggle').addEventListener('click',()=>{
   if(light){ delete document.documentElement.dataset.mode; localStorage.setItem('asv_mode','dark'); }
   else{ document.documentElement.dataset.mode='light'; localStorage.setItem('asv_mode','light'); }
 });
+
+/* ================= HERO SLIDESHOW ================= */
+let heroTimer=null;
+function startHeroSlideshow(){
+  const A=document.getElementById('heroBgA'), B=document.getElementById('heroBgB');
+  if(heroTimer){ clearInterval(heroTimer); heroTimer=null; }
+  const first = SETTINGS.heroImage||'images/wedding-exit.jpg';
+  const imgs=[first, ...GALLERY.map(g=>g.src).filter(s=>s!==first)];
+  const restartKB=el=>{ el.style.animation='none'; void el.offsetWidth; el.style.animation=''; };
+  A.style.backgroundImage=`url('${imgs[0]}')`; A.classList.add('show'); B.classList.remove('show');
+  if(HERO_SLIDE_SECONDS<=0 || imgs.length<2) return;
+  imgs.forEach(s=>{ const i=new Image(); i.src=s; });  // preload so fades are seamless
+  let idx=0, front=A, back=B;
+  heroTimer=setInterval(()=>{
+    idx=(idx+1)%imgs.length;
+    back.style.backgroundImage=`url('${imgs[idx]}')`;
+    restartKB(back);
+    back.classList.add('show'); front.classList.remove('show');
+    const tmp=front; front=back; back=tmp;
+  }, Math.max(2,HERO_SLIDE_SECONDS)*1000);
+}
 
 /* ================= PRELOADER ================= */
 let SND_CTX=null;
@@ -774,7 +803,7 @@ const loader = document.getElementById('aperture-loader');
 const camFlash = document.getElementById('camFlash');
 const seen = sessionStorage.getItem('asv_seen');
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-function openSite(){ document.body.classList.add('loaded'); }
+function openSite(){ document.body.classList.add('loaded'); startHeroSlideshow(); }
 if(seen || reduced){ loader.remove(); camFlash.remove(); requestAnimationFrame(()=>setTimeout(openSite,60)); }
 else{
   sessionStorage.setItem('asv_seen','1');
@@ -975,7 +1004,7 @@ function persist(){
   }
   refreshPublic();
 }
-function refreshPublic(){ applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); }
+function refreshPublic(){ applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); startHeroSlideshow(); }
 function admRender(){
   const pl=document.getElementById('admPhotoList'); pl.innerHTML='';
   const curHero = SETTINGS.heroImage || 'images/wedding-exit.jpg';
@@ -1087,7 +1116,7 @@ function admReset(){
 }
 
 /* ================= INIT ================= */
-applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); watchReveals(); routeAdmin();
+applySettings(); renderFilters(); renderGallery(); renderVideos(); renderIgFeed(); startHeroSlideshow(); watchReveals(); routeAdmin();
 </script>
 </body>
 </html>
