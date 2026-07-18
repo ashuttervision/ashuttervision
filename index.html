@@ -66,13 +66,17 @@ button{font-family:inherit;cursor:pointer}
 .logo-img{height:32px;width:auto;filter:var(--logo-filter);transition:filter .4s}
 
 /* ============ PRELOADER / LOGO INTRO ============ */
-#aperture-loader{position:fixed;inset:0;z-index:1000;background:#0a0a0c;display:flex;align-items:center;justify-content:center;transition:opacity .7s ease .1s,visibility .7s .1s;overflow:hidden}
+#aperture-loader{position:fixed;inset:0;z-index:1000;background:#0a0a0c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .7s ease .1s,visibility .7s .1s;overflow:hidden;cursor:pointer}
 #aperture-loader.open{opacity:0;visibility:hidden;pointer-events:none}
 .loader-bg{position:absolute;inset:0;background:center/cover no-repeat;filter:blur(26px) brightness(.5);transform:scale(1.14);transition:filter 1s cubic-bezier(.6,0,.3,1),transform 1s cubic-bezier(.6,0,.3,1)}
 #aperture-loader.rise .loader-bg{filter:blur(0) brightness(.82);transform:scale(1.03)}
 .loader-logo{position:relative;z-index:2;width:min(58vw,470px);transform:translateY(18px) scale(.84);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
 #aperture-loader.in .loader-logo{transform:translateY(0) scale(1)}
 #aperture-loader.rise .loader-logo{transition:transform 1s cubic-bezier(.55,0,.2,1);transform:translateY(-26vh) scale(.8)}
+.tap-cue{position:relative;z-index:2;font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:rgba(242,239,233,.8);opacity:0;transition:opacity .6s ease .6s}
+#aperture-loader.in .tap-cue{opacity:1;animation:tapPulse 2.4s ease-in-out 1.4s infinite}
+#aperture-loader.go .tap-cue{transition:opacity .25s ease;opacity:0;animation:none}
+@keyframes tapPulse{0%,100%{opacity:.85}50%{opacity:.3}}
 #camFlash{position:fixed;inset:0;z-index:1100;background:#fff;opacity:0;pointer-events:none;transition:opacity .1s ease-in}
 #camFlash.on{opacity:1}
 #camFlash.fade{transition:opacity .55s ease-out;opacity:0}
@@ -320,6 +324,7 @@ footer p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(-
 <div id="aperture-loader" aria-hidden="true">
   <div class="loader-bg" id="loaderBg"></div>
   <img class="loader-logo js-loader-logo" src="images/logo.png" alt="aShutterVision">
+  <div class="tap-cue">Tap anywhere to begin</div>
 </div>
 <div id="camFlash" aria-hidden="true"></div>
 
@@ -716,13 +721,18 @@ document.getElementById('modeToggle').addEventListener('click',()=>{
 });
 
 /* ================= PRELOADER ================= */
+let SND_CTX=null;
+function sndCtx(){
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!SND_CTX) SND_CTX=new C();
+  if(SND_CTX.state==='suspended') SND_CTX.resume().catch(()=>{});
+  return SND_CTX;
+}
 function playShutter(kind){
   kind = kind || SETTINGS.shutterSound || 'digital';
   if(kind==='off') return;
   try{
-    const C=window.AudioContext||window.webkitAudioContext;
-    const ctx=new C();
-    if(ctx.state==='suspended') ctx.resume().catch(()=>{});
+    const ctx=sndCtx();
     const t=ctx.currentTime;
     const noise=(at,dur,freq,q,g)=>{
       const len=Math.max(1,Math.floor(ctx.sampleRate*dur));
@@ -770,11 +780,20 @@ else{
   sessionStorage.setItem('asv_seen','1');
   // configured hero image, defocused, behind the logo
   document.getElementById('loaderBg').style.backgroundImage = `url('${SETTINGS.heroImage||'images/wedding-exit.jpg'}')`;
-  setTimeout(()=>{ loader.classList.add('in'); }, 150);    // logo fades/sharpens in, big and centered
-  setTimeout(()=>{ loader.classList.add('rise'); }, 1150); // logo pushes up toward the stars + focus pull begins
-  setTimeout(()=>{ camFlash.classList.add('on'); playShutter(); }, 2150); // logo hits apex, image in focus → flash + shutter
-  setTimeout(()=>{ loader.classList.add('open'); openSite(); camFlash.classList.add('fade'); }, 2300); // flash decays onto the page
-  setTimeout(()=>{ loader.remove(); camFlash.remove(); }, 3100);
+  setTimeout(()=>{ loader.classList.add('in'); }, 150); // logo scales in, big and centered, with tap cue
+  let introStarted=false;
+  const beginIntro=()=>{
+    if(introStarted) return; introStarted=true;
+    ['pointerdown','keydown','touchstart'].forEach(ev=>removeEventListener(ev,beginIntro));
+    // the tap is a user gesture — unlock audio now so the shutter is guaranteed to play
+    try{ const ctx=sndCtx(); const b=ctx.createBufferSource(); b.buffer=ctx.createBuffer(1,1,22050); b.connect(ctx.destination); b.start(0); }catch(e){}
+    loader.classList.add('go');                                              // tap cue fades
+    setTimeout(()=>{ loader.classList.add('rise'); }, 60);                   // logo pushes up + focus pull
+    setTimeout(()=>{ camFlash.classList.add('on'); playShutter(); }, 1080);  // apex + focus → flash + shutter click
+    setTimeout(()=>{ loader.classList.add('open'); openSite(); camFlash.classList.add('fade'); }, 1230);
+    setTimeout(()=>{ loader.remove(); camFlash.remove(); }, 2050);
+  };
+  ['pointerdown','keydown','touchstart'].forEach(ev=>addEventListener(ev,beginIntro));
 }
 
 /* ================= NAV ================= */
@@ -881,7 +900,7 @@ form.addEventListener('submit', async e=>{
   data._subject='📸 New inquiry from ashuttervision.com — '+(data.service||'General');
   data._template='table';
   try{
-    const r=await fetch('https://formsubmit.co/ajax/c648b591c12066b3a2e19bebf8c9d023',{
+    const r=await fetch('https://formsubmit.co/ajax/contactus@ashuttervision.com',{
       method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify(data)
     });
